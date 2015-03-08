@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+   <link rel="stylesheet" href="static/bootstrap.min.css">
+   <title>Anime Tracker</title>
+</head>
+<body>
+    <h1>Add an anime</h1>
+
+    <form action="/addAnime" method="POST">
+        <input type="text" name="title" placeholder="Anime Title">
+        <br>
+
+        <input type="text" name="episode" placeholder="Last viewed episode">
+        <br>
+        <br>
+
+        <input type="submit" value="Add anime">
+    </form>
+    <table class="table">
+            <tr>
+                <th><h2>Title</h2></th>
+                <th><h2>Last Episode</h2></th>
+                <th><h2>Options</h2></th>
+            </tr>
+            {{ range . }}
+            <tr>
+                <td><h4>{{.Title}}</h4></td>
+                <td>{{.Episode}}</td>
+                <td>
+                    <table class="table">
+                        <tr>
+                            <form action="/increment" method="POST">
+                                <input type="hidden" name="Title" value="{{.Title}}">
+                                <input type="submit" value="Increment">
+                            </form>
+                        </tr>
+                        <tr>
+                            <form action="/remove" method="POST">
+                                <input type="hidden" name="Title" value="{{.Title}}">
+                                <input type="submit" value="Remove">
+                            </form>
+                        </tr>
+                    </table>
+                </td>
+            </tr>
+            {{ end }}
+        </table>
+</body>
+</html>
