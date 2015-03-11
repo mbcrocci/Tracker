@@ -1,9 +1,12 @@
 package main
 
 import (
+	"io/ioutil"
 	"log"
 	"net/http"
+	"os"
 	"strconv"
+	"text/template"
 
 	"labix.org/v2/mgo/bson"
 )
@@ -11,13 +14,22 @@ import (
 var animeList []Anime
 
 func AnimeIndexHandler(w http.ResponseWriter, r *http.Request) {
-	templ := LoadTempl()
+	// Load html file
+	path := "/Users/mbcrocci/Projects/gocode/src/github.com/mbcrocci/Tracker/"
+	index, err := ioutil.ReadFile(path + "templates/aindex.html")
+	if err != nil {
+		log.Println("Can't read aindex.html")
+		os.Exit(2)
+	}
+	// Generate template
+	templ := template.Must(template.New("aindex").Parse(string(index[:])))
 
 	if err := colReturn(1).Find(nil).All(&animeList); err != nil {
 		log.Println("Can't find any animes")
 	}
 
 	templ.Execute(w, animeList)
+
 }
 
 func AnimeAddHandler(w http.ResponseWriter, r *http.Request) {
@@ -40,16 +52,17 @@ func AnimeAddHandler(w http.ResponseWriter, r *http.Request) {
 		log.Println("Can't insert anime")
 	}
 
-	http.Redirect(w, r, "/anime", http.StatusTemporaryRedirect)
+	http.Redirect(w, r, "/anime/", http.StatusTemporaryRedirect)
 }
 
 func AnimeIncrementHandler(w http.ResponseWriter, r *http.Request) {
 	r.ParseForm()
 
-	anime, err := SearchAnime(r.Form["title"][0], animeList)
+	anime, err := SearchAnime(r.Form["Title"][0], animeList)
 	if err != nil {
 		log.Println(err)
 	}
+	log.Println("Incrementing: ", r.Form)
 	anime.Increment()
 	err = colReturn(1).Update(
 		bson.M{"title": anime.Title},
@@ -58,19 +71,17 @@ func AnimeIncrementHandler(w http.ResponseWriter, r *http.Request) {
 		log.Println("Can't update anime int database")
 	}
 
-	http.Redirect(w, r, "/anime", http.StatusTemporaryRedirect)
+	http.Redirect(w, r, "/anime/", http.StatusTemporaryRedirect)
 }
 
 func AnimeRemoveHandler(w http.ResponseWriter, r *http.Request) {
 	r.ParseForm()
 
-	anime, err := SearchAnime(r.Form["title"][0], animeList)
+	log.Println("Removing ", r.Form)
+	err := colReturn(1).Remove(bson.M{"title": r.Form["Title"][0]})
 	if err != nil {
+		log.Println("Can't remove anime from database: ")
 		log.Println(err)
 	}
-
-	err = colReturn(1).RemoveId(anime.Id)
-	if err != nil {
-		log.Println("Can't remove anime from database")
-	}
+	http.Redirect(w, r, "/anime/", http.StatusTemporaryRedirect)
 }

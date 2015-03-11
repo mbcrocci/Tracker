@@ -57,15 +57,24 @@ func (a *Anime) Increment() {
 }
 
 type Serie struct {
-	Id            bson.ObjectId `bson:"id"`
-	Title         string        `bson:"title"`
-	N_seasons     int           `bson:"n_seasons"`
-	Curr_season   int           `bson:"curr_season"`
-	Ep_per_season []int         `bson:"ep_per_season"`
+	Id          bson.ObjectId `bson:"id"`
+	Title       string        `bson:"title"`
+	NSeasons    int           `bson:"nseasons"`
+	CurrSeason  int           `bson:"currSeason"`
+	CurrEp      int           `bson:"currEp"`
+	EpPerSeason []int         `bson:"epPerSeason"`
 }
 
-func (s *Serie) Increment(pos int) {
-	s.Ep_per_season[pos] += 1
+func (s *Serie) Increment() error {
+	if s.CurrEp == s.EpPerSeason[s.CurrSeason] {
+		if s.CurrSeason == s.NSeasons {
+			return errors.New("Can't increment")
+		}
+		s.CurrSeason += 1
+		s.CurrEp = 1
+	}
+	s.CurrEp += 1
+	return nil
 }
 func SearchSerie(title string, list []Serie) (Serie, error) {
 	for _, s := range list {
@@ -74,5 +83,5 @@ func SearchSerie(title string, list []Serie) (Serie, error) {
 		}
 	}
 	err := errors.New("Can't fin anime: " + title)
-	return Serie{bson.NewObjectId(), "err", 0, 0, []int{}}, err
+	return Serie{bson.NewObjectId(), "err", 0, 0, 0, []int{}}, err
 }

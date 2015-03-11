@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang=en>
+<head>
+    <meta charset="UTF-8">
+    <link rel="stylesheet" href="static/bootstrap.min.css">
+    <title>New Serie - Tracker</title>
+      <script type="text/javascript">
+        function addFields() {
+            var number = document.getElementById("nS").value;
+            var container = document.getElementById("container");
+            
+            while(container.hasChildNodes()) {
+                container.removeChild(container.lastChild);
+            }
+            for (i=0;i<number;i++) {
+                container.appendChild(document.createTextNode("Season " + (i+1)));
+                
+                var input = document.createElement("input");
+                input.type = "text";
+                input.name = "s" + i;
+                container.appendChild(input);
+                
+                container.appendChild(document.createElement("br"));
+            }
+        }
+   
+    </script>
+</head>
+<body>
+    <h1>New Serie</h1>
+    <form action=/series/add method=POST>
+        <input type="submit" value="Add serie"><br><br>
+        Title: <input type=text name=title placeholder="Serie's Title"><br><br>
+        
+        N. Seasons: <input id=nS type=text name=n_seasons placeholder="Number of seasons"><br>
+        Season: <input type=text name=curr_season placeholder="Current season"><br>
+        Episode: <input type=text name=curr_ep placeholder="Current episode"><br>
+        
+        Episode per season: <a onclick="addFields()">Generate seasons </a>
+        <div id="container"/>
+    </form>
+</body>
+</html>

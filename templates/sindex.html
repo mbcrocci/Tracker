@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.2/css/bootstrap.min.css">
+    <title>Series Tracker</title>
+</head>
+<body>
+    <h1><a href="/series/new">New Series</a></h1>
+    <table class="table">
+        <tr>
+            <th><h2>Title</h2></th>
+            <th><h2>Current Season+Episode</h2></th>
+            <th><h2>Options</h2></th>
+        </tr>
+        {{range .}}
+        <tr>
+            <td><h4>{{.Title}}</h4></td>
+            <td>S{{.CurrSeason}}E{{.CurrEp}}</td>
+            <td>
+                <table class="table">
+                    <tr>
+                        <form action="/series/increment" method="POST">
+                            <input type="hidden" name="Title" value="{{.Title}}">
+                            <input type="submit" value="Increment">
+                        </form>
+                    </tr>
+                    <tr>
+                        <form action="/series/remove" method="POST">
+                            <input type="hidden" name="Title" value="{{.Title}}">
+                            <input type="submit" value="Remove">
+                        </form>
+                    </tr>
+                </table>
+            </td>
+        </tr>
+        {{ end }}
+    </table>
+</body>
+</html>

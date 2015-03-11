@@ -11,15 +11,18 @@ import (
 )
 
 func RunServer() {
-	log.Println("Starting server on http://localhost:3000")
+	log.Println("Starting server on http://localhost:4000")
 
 	path := "/Users/mbcrocci/Projects/gocode/src/github.com/mbcrocci/Tracker/"
 
-	http.Handle("/static/", http.StripPrefix("/static/", http.FileServer(http.Dir(path+"static"))))
+	http.Handle("/static/", http.StripPrefix("/static/", http.FileServer(http.Dir(path+"templates"))))
 
 	r := mux.NewRouter()
 
+	r.HandleFunc("/", IndexHandler)
+
 	a := r.PathPrefix("/anime").Subrouter()
+	s := r.PathPrefix("/series").Subrouter()
 
 	a.HandleFunc("/", AnimeIndexHandler)
 
@@ -32,9 +35,9 @@ func RunServer() {
 	// Remove handler
 	a.HandleFunc("/remove", AnimeRemoveHandler)
 
-	s := r.PathPrefix("/series").Subrouter()
-
 	s.HandleFunc("/", SeriesIndexHandler)
+
+	s.HandleFunc("/new", SeriesNewHandler)
 
 	// Add new serie handler
 	s.HandleFunc("/add", SeriesAddHandler)
@@ -46,11 +49,10 @@ func RunServer() {
 	s.HandleFunc("/remove", SeriesRemoveHandler)
 
 	http.Handle("/", r)
-	http.ListenAndServe(":3001", nil)
+	http.ListenAndServe(":4000", nil)
 }
 
-func LoadTempl() *template.Template {
-	// Load html file
+func IndexHandler(rw http.ResponseWriter, req *http.Request) {
 	path := "/Users/mbcrocci/Projects/gocode/src/github.com/mbcrocci/Tracker/"
 	index, err := ioutil.ReadFile(path + "templates/index.html")
 	if err != nil {
@@ -58,6 +60,10 @@ func LoadTempl() *template.Template {
 		os.Exit(2)
 	}
 	// Generate template
-	return template.Must(template.New("index").Parse(string(index[:])))
+	templ := template.Must(template.New("index").Parse(string(index[:])))
+	if err := colReturn(2).Find(nil).All(&seriesList); err != nil {
+		log.Println("Can't find any series")
+	}
 
+	templ.Execute(rw, nil)
 }
