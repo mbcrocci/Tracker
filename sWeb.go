@@ -61,6 +61,7 @@ func SeriesAddHandler(w http.ResponseWriter, r *http.Request) {
 		log.Println("Can't convert curr_seasons to int")
 		http.Redirect(w, r, "/series/", http.StatusTemporaryRedirect)
 	}
+	
 	currEp, err := strconv.Atoi(r.Form["curr_ep"][0])
 	if err != nil {
 		log.Println("Can't convert curr_seasons to int")
@@ -111,7 +112,9 @@ func SeriesIncrementHandler(w http.ResponseWriter, r *http.Request) {
 		bson.M{"title": serie.Title},
 		bson.M{"$set": bson.M{
 			"currSeason": serie.CurrSeason,
-			"currEp":     serie.CurrEp}})
+			"currEp":     serie.CurrEp,
+		}},
+	)
 	if err != nil {
 		log.Println("Can't update serie into database")
 	}
