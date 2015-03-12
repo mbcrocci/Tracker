@@ -102,15 +102,11 @@ func SeriesIncrementHandler(w http.ResponseWriter, r *http.Request) {
 		log.Println(err)
 		http.Redirect(w, r, "/series/", http.StatusTemporaryRedirect)
 	}
-	log.Println("searched serie")
 
 	if err = serie.Increment(); err != nil {
 		http.Redirect(w, r, "/series/", http.StatusTemporaryRedirect)
 	}
 
-	log.Println("incremented")
-
-	//(TODO): Not actually updating for some reason!!!!!
 	err = colReturn(2).Update(
 		bson.M{"title": serie.Title},
 		bson.M{"$set": bson.M{
@@ -119,7 +115,6 @@ func SeriesIncrementHandler(w http.ResponseWriter, r *http.Request) {
 	if err != nil {
 		log.Println("Can't update serie into database")
 	}
-	log.Println("updated")
 
 	http.Redirect(w, r, "/series/", http.StatusTemporaryRedirect)
 }
