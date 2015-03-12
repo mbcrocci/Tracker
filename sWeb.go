@@ -15,7 +15,7 @@ var seriesList []Serie
 
 func SeriesIndexHandler(w http.ResponseWriter, r *http.Request) {
 	// Load html file
-	path := "/Users/mbcrocci/Projects/gocode/src/github.com/mbcrocci/Tracker/"
+	path := os.Getenv("GOPAHT") + "/src/github.com/mbcrocci/Tracker/"
 	index, err := ioutil.ReadFile(path + "templates/sindex.html")
 	if err != nil {
 		log.Println("Can't read sindex.html")
@@ -36,7 +36,7 @@ func SeriesIndexHandler(w http.ResponseWriter, r *http.Request) {
 
 func SeriesNewHandler(w http.ResponseWriter, r *http.Request) {
 	// Load html file
-	path := "/Users/mbcrocci/Projects/gocode/src/github.com/mbcrocci/Tracker/"
+	path := os.Getenv("GOPATH") + "/src/github.com/mbcrocci/Tracker/"
 	index, err := ioutil.ReadFile(path + "templates/new.html")
 	if err != nil {
 		log.Println("Can't read new.html")
