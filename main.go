@@ -66,22 +66,25 @@ type Serie struct {
 }
 
 func (s *Serie) Increment() error {
-	if s.CurrEp == s.EpPerSeason[s.CurrSeason] {
+	if s.CurrEp == s.EpPerSeason[s.CurrSeason-1] {
 		if s.CurrSeason == s.NSeasons {
 			return errors.New("Can't increment")
 		}
+
 		s.CurrSeason += 1
 		s.CurrEp = 1
+		return nil
 	}
 	s.CurrEp += 1
 	return nil
 }
+
 func SearchSerie(title string, list []Serie) (Serie, error) {
 	for _, s := range list {
 		if s.Title == title {
 			return s, nil
 		}
 	}
-	err := errors.New("Can't fin anime: " + title)
+	err := errors.New("Can't fin serie: " + title)
 	return Serie{bson.NewObjectId(), "err", 0, 0, 0, []int{}}, err
 }

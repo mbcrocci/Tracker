@@ -109,11 +109,13 @@ func SeriesIncrementHandler(w http.ResponseWriter, r *http.Request) {
 	}
 
 	log.Println("incremented")
+
+	//(TODO): Not actually updating for some reason!!!!!
 	err = colReturn(2).Update(
 		bson.M{"title": serie.Title},
 		bson.M{"$set": bson.M{
-			"currSeason":  serie.CurrSeason,
-			"currEpisode": serie.CurrEp}})
+			"currSeason": serie.CurrSeason,
+			"currEp":     serie.CurrEp}})
 	if err != nil {
 		log.Println("Can't update serie into database")
 	}
@@ -125,15 +127,10 @@ func SeriesIncrementHandler(w http.ResponseWriter, r *http.Request) {
 func SeriesRemoveHandler(w http.ResponseWriter, r *http.Request) {
 	r.ParseForm()
 
-	serie, err := SearchSerie(r.Form["Title"][0], seriesList)
-	if err != nil {
-		log.Println(err)
-	}
-
-	err = colReturn(2).RemoveId(serie.Id)
+	err := colReturn(2).Remove(bson.M{"title": r.Form["Title"][0]})
 	if err != nil {
 		log.Println("Can't remove anime from database")
 	}
 
-	http.Redirect(w, r, "/serie", http.StatusTemporaryRedirect)
+	http.Redirect(w, r, "/series/", http.StatusTemporaryRedirect)
 }
