@@ -41,8 +41,6 @@ func AnimeAddHandler(w http.ResponseWriter, r *http.Request) {
 		http.Redirect(w, r, "/anime", http.StatusTemporaryRedirect)
 	}
 
-	log.Println("Adding anime:", r.Form)
-
 	err = colReturn(1).Insert(Anime{
 		Id:      bson.NewObjectId(),
 		Title:   r.Form["title"][0],
@@ -62,11 +60,13 @@ func AnimeIncrementHandler(w http.ResponseWriter, r *http.Request) {
 	if err != nil {
 		log.Println(err)
 	}
-	log.Println("Incrementing: ", r.Form)
+	
 	anime.Increment()
+	
 	err = colReturn(1).Update(
 		bson.M{"title": anime.Title},
-		bson.M{"$set": bson.M{"episode": anime.Episode}})
+		bson.M{"$set": bson.M{"episode": anime.Episode}},
+	)
 	if err != nil {
 		log.Println("Can't update anime int database")
 	}
