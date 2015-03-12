@@ -15,7 +15,7 @@ var animeList []Anime
 
 func AnimeIndexHandler(w http.ResponseWriter, r *http.Request) {
 	// Load html file
-	path := "/Users/mbcrocci/Projects/gocode/src/github.com/mbcrocci/Tracker/"
+	path := os.Getenv("GOPATH") + "/src/github.com/mbcrocci/Tracker/"
 	index, err := ioutil.ReadFile(path + "templates/aindex.html")
 	if err != nil {
 		log.Println("Can't read aindex.html")
