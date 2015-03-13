@@ -15,7 +15,7 @@ var seriesList []Serie
 
 func SeriesIndexHandler(w http.ResponseWriter, r *http.Request) {
 	// Load html file
-	path := os.Getenv("GOPAHT") + "/src/github.com/mbcrocci/Tracker/"
+	path := os.Getenv("GOPATH") + "/src/github.com/mbcrocci/Tracker/"
 	index, err := ioutil.ReadFile(path + "templates/sindex.html")
 	if err != nil {
 		log.Println("Can't read sindex.html")
@@ -27,7 +27,7 @@ func SeriesIndexHandler(w http.ResponseWriter, r *http.Request) {
 		log.Println("Can't generate template beacause:", err)
 		os.Exit(1)
 	}
-	if err := colReturn(2).Find(nil).All(&seriesList); err != nil {
+	if err := colReturn(2).Find(nil).Sort("title").All(&seriesList); err != nil {
 		log.Println("Can't find any series")
 	}
 
@@ -61,7 +61,7 @@ func SeriesAddHandler(w http.ResponseWriter, r *http.Request) {
 		log.Println("Can't convert curr_seasons to int")
 		http.Redirect(w, r, "/series/", http.StatusTemporaryRedirect)
 	}
-	
+
 	currEp, err := strconv.Atoi(r.Form["curr_ep"][0])
 	if err != nil {
 		log.Println("Can't convert curr_seasons to int")

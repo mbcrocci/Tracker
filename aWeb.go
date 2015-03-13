@@ -24,7 +24,7 @@ func AnimeIndexHandler(w http.ResponseWriter, r *http.Request) {
 	// Generate template
 	templ := template.Must(template.New("aindex").Parse(string(index[:])))
 
-	if err := colReturn(1).Find(nil).All(&animeList); err != nil {
+	if err := colReturn(1).Find(nil).Sort("title").All(&animeList); err != nil {
 		log.Println("Can't find any animes")
 	}
 
@@ -60,9 +60,9 @@ func AnimeIncrementHandler(w http.ResponseWriter, r *http.Request) {
 	if err != nil {
 		log.Println(err)
 	}
-	
+
 	anime.Increment()
-	
+
 	err = colReturn(1).Update(
 		bson.M{"title": anime.Title},
 		bson.M{"$set": bson.M{"episode": anime.Episode}},
