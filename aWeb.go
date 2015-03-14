@@ -42,7 +42,7 @@ func AnimeAddHandler(w http.ResponseWriter, r *http.Request) {
 	}
 
 	err = colReturn(1).Insert(Anime{
-		Id:      bson.NewObjectId(),
+		ID:      bson.NewObjectId(),
 		Title:   r.Form["title"][0],
 		Episode: ep,
 	})

@@ -81,7 +81,7 @@ func SeriesAddHandler(w http.ResponseWriter, r *http.Request) {
 	}
 
 	err = colReturn(2).Insert(Serie{
-		Id:          bson.NewObjectId(),
+		ID:          bson.NewObjectId(),
 		Title:       r.Form["title"][0],
 		NSeasons:    nSeasons,
 		CurrSeason:  currSeason,
