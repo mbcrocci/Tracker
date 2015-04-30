@@ -24,7 +24,7 @@ func AnimeIndexHandler(w http.ResponseWriter, r *http.Request) {
 	// Generate template
 	templ := template.Must(template.New("aindex").Parse(string(index[:])))
 
-	if err := colReturn(1).Find(nil).Sort("title").All(&animeList); err != nil {
+	if err := colReturn(1).Find(nil).Sort("completed", "title").All(&animeList); err != nil {
 		log.Println("Can't find any animes")
 	}
 
@@ -61,7 +61,11 @@ func AnimeIncrementHandler(w http.ResponseWriter, r *http.Request) {
 		log.Println(err)
 	}
 
-	anime.Increment()
+	err = anime.Increment()
+	if err != nil {
+		log.Println("Anime is completed cant increment")
+		http.Redirect(w, r, "/anime/", http.StatusTemporaryRedirect)
+	}
 
 	err = colReturn(1).Update(
 		bson.M{"title": anime.Title},
@@ -69,6 +73,28 @@ func AnimeIncrementHandler(w http.ResponseWriter, r *http.Request) {
 	)
 	if err != nil {
 		log.Println("Can't update anime int database")
+	}
+
+	http.Redirect(w, r, "/anime/", http.StatusTemporaryRedirect)
+}
+
+func AnimeCompleteHandler(w http.ResponseWriter, r *http.Request) {
+	r.ParseForm()
+
+	anime, err := SearchAnime(r.Form["Title"][0], animeList)
+	if err != nil {
+		log.Println(err)
+		http.Redirect(w, r, "/anime/", http.StatusTemporaryRedirect)
+	}
+
+	anime.Complete()
+
+	err = colReturn(1).Update(
+		bson.M{"title": anime.Title},
+		bson.M{"$set": bson.M{"completed": anime.Completed}},
+	)
+	if err != nil {
+		log.Println("Can't update anime")
 	}
 
 	http.Redirect(w, r, "/anime/", http.StatusTemporaryRedirect)

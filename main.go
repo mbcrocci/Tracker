@@ -16,6 +16,8 @@ func main() {
 	session, err := mgo.Dial(os.Getenv("MONGO_URL"))
 	if err != nil {
 		log.Println("Can't connect to mongo")
+
+		// try to reconnect to database after 10 seconds
 		time.Sleep(time.Second * 10)
 		session, err = mgo.Dial(os.Getenv("Mongo_URL"))
 	}
@@ -36,7 +38,7 @@ func colReturn(op int) *mgo.Collection {
 
 }
 
-// SearchAnime  for the anime on a lis
+// SearchAnime  for the anime on a list
 func SearchAnime(title string, list []Anime) (Anime, error) {
 	for _, a := range list {
 		if a.Title == title {
@@ -44,19 +46,30 @@ func SearchAnime(title string, list []Anime) (Anime, error) {
 		}
 	}
 	err := errors.New("Can't fin anime: " + title)
-	return Anime{bson.NewObjectId(), "err", 0}, err
+	return Anime{bson.NewObjectId(), "err", 0, false}, err
 }
 
 // Anime holds information on a certain anime
 type Anime struct {
-	ID      bson.ObjectId `bson:"id"`
-	Title   string        `bson:"title"`
-	Episode int           `bson:"episode"`
+	ID        bson.ObjectId `bson:"id"`
+	Title     string        `bson:"title"`
+	Episode   int           `bson:"episode"`
+	Completed bool          `bson:"completed"`
 }
 
-// Increment increases a anime episode by one
-func (a *Anime) Increment() {
-	a.Episode++
+// Increment increases a anime episode by one unless it is completed
+func (a *Anime) Increment() error {
+	if !a.Completed {
+		a.Episode++
+		return nil
+	}
+
+	return errors.New("Anime completed")
+}
+
+// Complete changes the Completed field to true
+func (a *Anime) Complete() {
+	a.Completed = true
 }
 
 // Serie is a more complex tracker than anime
@@ -69,15 +82,10 @@ type Serie struct {
 	EpPerSeason []int         `bson:"epPerSeason"`
 }
 
-func test(heelo int) bool {
-	return true
-}
-
-// Increment increase a series current episode by one.
-// It checks to see if the current episode is the one of the season.
-// If so, checks if the current season is the last one, in which case, it
-// ca't increment.
-// Other wise it increases the season and sets the current episode to 1.
+// Increment increases a series current episode by one.
+// It checks to see if the current episode is the last one of the season.
+// If so, checks if the current season is the last one, in which case, it can't increment.
+// Other wise, it increases the season and sets the current episode to 1.
 func (s *Serie) Increment() error {
 	if s.CurrEp == s.EpPerSeason[s.CurrSeason-1] {
 		if s.CurrSeason == s.NSeasons {

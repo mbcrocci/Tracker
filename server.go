@@ -30,6 +30,8 @@ func RunServer() {
 
 	a.HandleFunc("/increment", AnimeIncrementHandler)
 
+	a.HandleFunc("/complete", AnimeCompleteHandler)
+
 	a.HandleFunc("/remove", AnimeRemoveHandler)
 
 	s.HandleFunc("/", SeriesIndexHandler)
