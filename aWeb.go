@@ -49,6 +49,7 @@ func AnimeAddHandler(w http.ResponseWriter, r *http.Request) {
 	if err != nil {
 		log.Println("Can't insert anime")
 	}
+	log.Println("Added: ", r.Form)
 
 	http.Redirect(w, r, "/anime/", http.StatusTemporaryRedirect)
 }
@@ -75,6 +76,7 @@ func AnimeIncrementHandler(w http.ResponseWriter, r *http.Request) {
 		log.Println("Can't update anime int database")
 	}
 
+	log.Println("Incremented: ", r.Form)
 	http.Redirect(w, r, "/anime/", http.StatusTemporaryRedirect)
 }
 
@@ -97,17 +99,19 @@ func AnimeCompleteHandler(w http.ResponseWriter, r *http.Request) {
 		log.Println("Can't update anime")
 	}
 
+	log.Println("Completed: ", r.Form)
 	http.Redirect(w, r, "/anime/", http.StatusTemporaryRedirect)
 }
 
 func AnimeRemoveHandler(w http.ResponseWriter, r *http.Request) {
 	r.ParseForm()
 
-	log.Println("Removing ", r.Form)
 	err := colReturn(1).Remove(bson.M{"title": r.Form["Title"][0]})
 	if err != nil {
 		log.Println("Can't remove anime from database: ")
 		log.Println(err)
 	}
+
+	log.Println("Removed: ", r.Form)
 	http.Redirect(w, r, "/anime/", http.StatusTemporaryRedirect)
 }

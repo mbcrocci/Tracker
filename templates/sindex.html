@@ -1,18 +1,22 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1" charset="UTF-8">
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.2/css/bootstrap.min.css">
     <title>Series Tracker</title>
 </head>
 <body>
+	<div class="container">
     <h1><a href="/series/new">New Series</a></h1>
-    <table class="table">
+    <table class="table table-striped">
+	    <thead>
         <tr>
             <th><h2>Title</h2></th>
             <th><h2>Current Episode</h2></th>
             <th><h2>Options</h2></th>
         </tr>
+	    </thead>
+	    <tbody>
         {{range .}}
         <tr>
             <td><h5>{{.Title}}</h5></td>
@@ -22,19 +26,21 @@
                     <tr>
                         <form action="/series/increment" method="POST">
                             <input type="hidden" name="Title" value="{{.Title}}">
-                            <input type="submit" value="Increment">
+                            <input class="btn btn-default"type="submit" value="Increment">
                         </form>
                     </tr>
                     <tr>
                         <form action="/series/remove" method="POST">
                             <input type="hidden" name="Title" value="{{.Title}}">
-                            <input type="submit" value="Remove">
+                            <input class="btn btn-danger" type="submit" value="Remove">
                         </form>
                     </tr>
                 </table>
             </td>
         </tr>
         {{ end }}
+	    </tbody>
     </table>
+	</div>
 </body>
 </html>

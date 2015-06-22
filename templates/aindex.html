@@ -1,59 +1,62 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1" charset="UTF-8">
    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.2/css/bootstrap.min.css">
    <title>Anime Tracker</title>
 </head>
 <body>
-   <table class="table">
-            <tr>
-                <th><h2>Title</h2></th>
-                <th><h2>Last Episode</h2></th>
-                <th><h2>Status</h2></th>
-                <th><h2>Actions</h2></th>
-            </tr>
-            {{ range . }}
-            <tr>
-                <td><h4><a href="http://animeshow.tv/{{.Title}}/">{{.Title}}</a></h4></td>
-                <td>{{.Episode}}</td>
-                <td>{{ if .Completed }} <strong>Completed</strong> {{ else }} <strong>On going</strong> {{end}}</td>
-                <td>
-                    <table class="table">
-                        <tr>
-                            <form action="/anime/increment" method="POST">
-                                <input type="hidden" name="Title" value="{{.Title}}">
-                                <input type="submit" value="Increment">
-                            </form>
-                        </tr>
-                        <tr>
-                            <form action="/anime/complete" method="POST">
-                                <input type="hidden" name="Title" value="{{.Title}}">
-                                <input type="submit" value="Complete">
-                            </form>
-                        </tr>
+<div class ="container">
+	<h1>Add an anime</h1>
+	<form role="form" action="/anime/add" method="POST">
+		<div class="form-group">
+			<input class="form-control" type="text" name="title" placeholder="Anime Title">
+			<input class="form-control" type="text" name="episode" placeholder="Last viewed episode">
+		</div>
+		
+		<input class="btn btn-success" type="submit" value="Add anime">
+	</form>
+	<table class="table table-striped">
+		<thead>
+			    <tr>
+				    <th><h2>Title</h2></th>
+				    <th><h2>Last Episode</h2></th>
+				    <th><h2>Status</h2></th>
+				    <th><h2>Actions</h2></th>
+			    </tr>
+		</thead>
+		<tbody>
+			{{ range . }}
 			<tr>
-			  <form action="/anime/remove" method="POST">
-			    <input type="hidden" name="Title" value="{{.Title}}">
-			    <input type="submit" value="Remove">
-			  </form>
-                    </table>
-                </td>
-            </tr>
-            {{ end }}
-    </table>
-
-    <h1>Add an anime</h1>
-    <form action="/anime/add" method="POST">
-        <input type="text" name="title" placeholder="Anime Title">
-        <br>
-
-        <input type="text" name="episode" placeholder="Last viewed episode">
-        <br>
-        <br>
-
-        <input type="submit" value="Add anime">
-    </form>
- 
+				<td><h4><a href="http://animeshow.tv/{{.Title}}/">{{.Title}}</a></h4></td>
+				<td>{{.Episode}}</td>
+				<td>{{ if .Completed }} <strong>Completed</strong> {{ else }} <strong>On going</strong> {{end}}</td>
+				    <td>
+					    <table class="table table-condensed">
+						    <tr>
+							    <form action="/anime/increment" method="POST">
+								    <input type="hidden" name="Title" value="{{.Title}}">
+								    <input class="btn btn-default btn-sm" type="submit" value="Increment">
+							    </form>
+						    </tr>
+						    <tr>
+							    <form action="/anime/complete" method="POST">
+								    <input type="hidden" name="Title" value="{{.Title}}">
+								    <input class="btn btn-primary btn-sm" type="submit" value="Complete">
+							</form>
+						    </tr>
+						    <tr>
+							    <form action="/anime/remove" method="POST">
+								    <input type="hidden" name="Title" value="{{.Title}}">
+								    <input class="btn btn-danger btn-sm" type="submit" value="Remove">
+							    </form>
+						    </tr>
+					    </table>
+				    </td>
+			</tr>
+			{{ end }}
+		    </tbody>
+	</table>	
+</div>
 </body>
 </html>

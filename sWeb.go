@@ -92,6 +92,7 @@ func SeriesAddHandler(w http.ResponseWriter, r *http.Request) {
 		log.Println("Can't insert serie")
 	}
 
+	log.Println("Added: ", r.Form)
 	http.Redirect(w, r, "/series/", http.StatusTemporaryRedirect)
 
 }
@@ -119,6 +120,7 @@ func SeriesIncrementHandler(w http.ResponseWriter, r *http.Request) {
 		log.Println("Can't update serie into database")
 	}
 
+	log.Println("Incremented: ", r.Form)
 	http.Redirect(w, r, "/series/", http.StatusTemporaryRedirect)
 }
 
@@ -130,5 +132,6 @@ func SeriesRemoveHandler(w http.ResponseWriter, r *http.Request) {
 		log.Println("Can't remove anime from database")
 	}
 
+	log.Println("Removed: ", r.Form)
 	http.Redirect(w, r, "/series/", http.StatusTemporaryRedirect)
 }
