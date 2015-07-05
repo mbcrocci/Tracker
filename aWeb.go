@@ -38,7 +38,8 @@ func AnimeAddHandler(w http.ResponseWriter, r *http.Request) {
 	ep, err := strconv.Atoi(r.Form["episode"][0])
 	if err != nil {
 		log.Println("Can't convert Form[\"episode\"] to int")
-		http.Redirect(w, r, "/anime", http.StatusTemporaryRedirect)
+		http.Redirect(w, r, "/anime", http.StatusFound)
+		return
 	}
 
 	err = colReturn(1).Insert(Anime{
@@ -48,10 +49,12 @@ func AnimeAddHandler(w http.ResponseWriter, r *http.Request) {
 	})
 	if err != nil {
 		log.Println("Can't insert anime")
+		http.Redirect(w, r, "/anime", http.StatusFound)
+		return
 	}
-	log.Println("Added: ", r.Form)
 
-	http.Redirect(w, r, "/anime/", http.StatusTemporaryRedirect)
+	log.Println("Added: ", r.Form)
+	http.Redirect(w, r, "/anime", http.StatusFound)
 }
 
 func AnimeIncrementHandler(w http.ResponseWriter, r *http.Request) {
@@ -60,12 +63,15 @@ func AnimeIncrementHandler(w http.ResponseWriter, r *http.Request) {
 	anime, err := SearchAnime(r.Form["Title"][0], animeList)
 	if err != nil {
 		log.Println(err)
+		http.Redirect(w, r, "/anime", http.StatusFound)
+		return
 	}
 
 	err = anime.Increment()
 	if err != nil {
 		log.Println("Anime is completed cant increment")
-		http.Redirect(w, r, "/anime/", http.StatusTemporaryRedirect)
+		http.Redirect(w, r, "/anime", http.StatusFound)
+		return
 	}
 
 	err = colReturn(1).Update(
@@ -74,10 +80,12 @@ func AnimeIncrementHandler(w http.ResponseWriter, r *http.Request) {
 	)
 	if err != nil {
 		log.Println("Can't update anime int database")
+		http.Redirect(w, r, "/anime", http.StatusFound)
+		return
 	}
 
 	log.Println("Incremented: ", r.Form)
-	http.Redirect(w, r, "/anime/", http.StatusTemporaryRedirect)
+	http.Redirect(w, r, "/anime", http.StatusFound)
 }
 
 func AnimeCompleteHandler(w http.ResponseWriter, r *http.Request) {
@@ -86,7 +94,8 @@ func AnimeCompleteHandler(w http.ResponseWriter, r *http.Request) {
 	anime, err := SearchAnime(r.Form["Title"][0], animeList)
 	if err != nil {
 		log.Println(err)
-		http.Redirect(w, r, "/anime/", http.StatusTemporaryRedirect)
+		http.Redirect(w, r, "/anime", http.StatusFound)
+		return
 	}
 
 	anime.Complete()
@@ -97,10 +106,12 @@ func AnimeCompleteHandler(w http.ResponseWriter, r *http.Request) {
 	)
 	if err != nil {
 		log.Println("Can't update anime")
+		http.Redirect(w, r, "/anime", http.StatusFound)
+		return
 	}
 
 	log.Println("Completed: ", r.Form)
-	http.Redirect(w, r, "/anime/", http.StatusTemporaryRedirect)
+	http.Redirect(w, r, "/anime", http.StatusFound)
 }
 
 func AnimeRemoveHandler(w http.ResponseWriter, r *http.Request) {
@@ -110,8 +121,10 @@ func AnimeRemoveHandler(w http.ResponseWriter, r *http.Request) {
 	if err != nil {
 		log.Println("Can't remove anime from database: ")
 		log.Println(err)
+		http.Redirect(w, r, "/anime", http.StatusFound)
+		return
 	}
 
 	log.Println("Removed: ", r.Form)
-	http.Redirect(w, r, "/anime/", http.StatusTemporaryRedirect)
+	http.Redirect(w, r, "/anime", http.StatusFound)
 }

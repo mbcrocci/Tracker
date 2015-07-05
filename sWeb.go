@@ -53,19 +53,22 @@ func SeriesAddHandler(w http.ResponseWriter, r *http.Request) {
 	nSeasons, err := strconv.Atoi(r.Form["n_seasons"][0])
 	if err != nil {
 		log.Println("Can't convert n_seasons to int")
-		http.Redirect(w, r, "/series/", http.StatusTemporaryRedirect)
+		http.Redirect(w, r, "/series/", http.StatusFound)
+		return
 	}
 
 	currSeason, err := strconv.Atoi(r.Form["curr_season"][0])
 	if err != nil {
 		log.Println("Can't convert curr_seasons to int")
-		http.Redirect(w, r, "/series/", http.StatusTemporaryRedirect)
+		http.Redirect(w, r, "/series/", http.StatusFound)
+		return
 	}
 
 	currEp, err := strconv.Atoi(r.Form["curr_ep"][0])
 	if err != nil {
 		log.Println("Can't convert curr_seasons to int")
-		http.Redirect(w, r, "/series/", http.StatusTemporaryRedirect)
+		http.Redirect(w, r, "/series/", http.StatusFound)
+		return
 	}
 
 	var epPerSeason []int
@@ -74,9 +77,9 @@ func SeriesAddHandler(w http.ResponseWriter, r *http.Request) {
 		ep, err := strconv.Atoi(r.Form[sName][0])
 		if err != nil {
 			log.Println("Can't conver ep to int")
-			http.Redirect(w, r, "/series/", http.StatusTemporaryRedirect)
+			http.Redirect(w, r, "/series/", http.StatusFound)
+			return
 		}
-
 		epPerSeason = append(epPerSeason, ep)
 	}
 
@@ -90,10 +93,12 @@ func SeriesAddHandler(w http.ResponseWriter, r *http.Request) {
 	})
 	if err != nil {
 		log.Println("Can't insert serie")
+		http.Redirect(w, r, "/series/", http.StatusFound)
+		return
 	}
 
 	log.Println("Added: ", r.Form)
-	http.Redirect(w, r, "/series/", http.StatusTemporaryRedirect)
+	http.Redirect(w, r, "/series/", http.StatusFound)
 
 }
 func SeriesIncrementHandler(w http.ResponseWriter, r *http.Request) {
@@ -102,11 +107,14 @@ func SeriesIncrementHandler(w http.ResponseWriter, r *http.Request) {
 	serie, err := SearchSerie(r.Form["Title"][0], seriesList)
 	if err != nil {
 		log.Println(err)
-		http.Redirect(w, r, "/series/", http.StatusTemporaryRedirect)
+		http.Redirect(w, r, "/series/", http.StatusFound)
+		return
 	}
 
 	if err = serie.Increment(); err != nil {
-		http.Redirect(w, r, "/series/", http.StatusTemporaryRedirect)
+		log.Println(err)
+		http.Redirect(w, r, "/series/", http.StatusFound)
+		return
 	}
 
 	err = colReturn(2).Update(
@@ -118,10 +126,12 @@ func SeriesIncrementHandler(w http.ResponseWriter, r *http.Request) {
 	)
 	if err != nil {
 		log.Println("Can't update serie into database")
+		http.Redirect(w, r, "/series/", http.StatusFound)
+		return
 	}
 
-	log.Println("Incremented: ", r.Form)
-	http.Redirect(w, r, "/series/", http.StatusTemporaryRedirect)
+	log.Println("Incrementing: ", r.Form)
+	http.Redirect(w, r, "/series/", http.StatusFound)
 }
 
 func SeriesRemoveHandler(w http.ResponseWriter, r *http.Request) {
@@ -130,8 +140,10 @@ func SeriesRemoveHandler(w http.ResponseWriter, r *http.Request) {
 	err := colReturn(2).Remove(bson.M{"title": r.Form["Title"][0]})
 	if err != nil {
 		log.Println("Can't remove anime from database")
+		http.Redirect(w, r, "/series/", http.StatusFound)
+		return
 	}
 
 	log.Println("Removed: ", r.Form)
-	http.Redirect(w, r, "/series/", http.StatusTemporaryRedirect)
+	http.Redirect(w, r, "/series/", http.StatusFound)
 }
