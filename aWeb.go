@@ -24,12 +24,12 @@ func AnimeIndexHandler(w http.ResponseWriter, r *http.Request) {
 	// Generate template
 	templ := template.Must(template.New("aindex").Parse(string(index[:])))
 
-	if err := colReturn(1).Find(nil).Sort("completed", "title").All(&animeList); err != nil {
+	err = colReturn(1).Find(nil).Sort("-watching", "completed", "title").All(&animeList)
+	if err != nil {
 		log.Println("Can't find any animes")
 	}
 
 	templ.Execute(w, animeList)
-
 }
 
 func AnimeAddHandler(w http.ResponseWriter, r *http.Request) {
@@ -111,6 +111,32 @@ func AnimeCompleteHandler(w http.ResponseWriter, r *http.Request) {
 	}
 
 	log.Println("Completed: ", r.Form)
+	http.Redirect(w, r, "/anime/", http.StatusFound)
+}
+
+func AnimeWatchHandler(w http.ResponseWriter, r *http.Request) {
+	r.ParseForm()
+
+	anime, err := SearchAnime(r.Form["Title"][0], animeList)
+	if err != nil {
+		log.Println(err)
+		http.Redirect(w, r, "/anime/", http.StatusFound)
+		return
+	}
+	anime.Show()
+	anime.Watch()
+	anime.Show()
+
+	err = colReturn(1).Update(
+		bson.M{"title": anime.Title},
+		bson.M{"$set": bson.M{"watching": anime.Watching}},
+	)
+	if err != nil {
+		log.Println(err)
+		http.Redirect(w, r, "/anime/", http.StatusFound)
+		return
+	}
+	log.Println("Watching: ", r.Form)
 	http.Redirect(w, r, "/anime/", http.StatusFound)
 }
 

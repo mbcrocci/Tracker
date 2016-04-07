@@ -2,6 +2,7 @@ package main
 
 import (
 	"errors"
+	"fmt"
 	"log"
 	"os"
 	"time"
@@ -45,8 +46,8 @@ func SearchAnime(title string, list []Anime) (Anime, error) {
 			return a, nil
 		}
 	}
-	err := errors.New("Can't fin anime: " + title)
-	return Anime{bson.NewObjectId(), "err", 0, false}, err
+	err := errors.New("Can't find anime: " + title)
+	return Anime{bson.NewObjectId(), "err", 0, false, false}, err
 }
 
 // Anime holds information on a certain anime
@@ -55,6 +56,7 @@ type Anime struct {
 	Title     string        `bson:"title"`
 	Episode   int           `bson:"episode"`
 	Completed bool          `bson:"completed"`
+	Watching  bool          `bson:"watching"`
 }
 
 // Increment increases a anime episode by one unless it is completed
@@ -70,6 +72,19 @@ func (a *Anime) Increment() error {
 // Complete changes the Completed field to true
 func (a *Anime) Complete() {
 	a.Completed = true
+}
+
+// Watch is used to bring the couple of animes
+// that may be being watch to the front of the list
+func (a *Anime) Watch() {
+		a.Watching = !a.Watching
+}
+
+func (a *Anime) Show() {
+	fmt.Println("Title: ", a.Title)
+	//fmt.Println("Episode: ", a.Episode)
+	//fmt.Println("Completed; ", a.Completed)
+	fmt.Println("Watching: ", a.Watching)
 }
 
 // Serie is a more complex tracker than anime

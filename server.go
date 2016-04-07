@@ -25,23 +25,16 @@ func RunServer() {
 	s := r.PathPrefix("/series").Subrouter()
 
 	a.HandleFunc("/", AnimeIndexHandler)
-
 	a.HandleFunc("/add", AnimeAddHandler)
-
 	a.HandleFunc("/increment", AnimeIncrementHandler)
-
 	a.HandleFunc("/complete", AnimeCompleteHandler)
-
+	a.HandleFunc("/watching", AnimeWatchHandler)
 	a.HandleFunc("/remove", AnimeRemoveHandler)
 
 	s.HandleFunc("/", SeriesIndexHandler)
-
 	s.HandleFunc("/new", SeriesNewHandler)
-
 	s.HandleFunc("/add", SeriesAddHandler)
-
 	s.HandleFunc("/increment", SeriesIncrementHandler)
-
 	s.HandleFunc("/remove", SeriesRemoveHandler)
 
 	http.Handle("/", r)

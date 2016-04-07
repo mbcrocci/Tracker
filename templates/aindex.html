@@ -43,7 +43,11 @@
 							    <form action="/anime/complete" method="POST">
 								    <input type="hidden" name="Title" value="{{.Title}}">
 								    <input class="btn btn-primary btn-sm" type="submit" value="Complete">
-							</form>
+							    </form>
+							    <form action="/anime/watching" method="POST">
+								    <input type="hidden" name="Title" value="{{.Title}}">
+								    <input class="btn btn-primary btn-sm" type="submit" value="Watching">
+							    </form>
 						    </tr>
 						    <tr>
 							    <form action="/anime/remove" method="POST">
